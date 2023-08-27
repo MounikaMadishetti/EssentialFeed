@@ -35,7 +35,7 @@ final class RemoteFeedLoadedTests: XCTestCase {
         XCTAssertEqual(client.requestedUrls, [url, url])
     }
 
-    func testload_deliversErrorOnClientError() {
+    func test_load_deliversErrorOnClientError() {
         // arrange
         let (sut, client) = makeSUT()
 
@@ -108,14 +108,7 @@ final class RemoteFeedLoadedTests: XCTestCase {
         return (sut, client)
     }
 
-    private func trackMemoryLeaks(_ instance: AnyObject, file: StaticString = #file, line: UInt = #line) {
-        addTeardownBlock { [weak instance] in
-            XCTAssertNil(instance, "sut is deallocated", file: file, line: line)
-        }
-    }
-
     private func expect(_ sut: RemoteFeedLoader, toCompleteWith expectedResult: RemoteFeedLoader.Result, when action: () -> Void, file: StaticString = #file, line: UInt = #line) {
-        var capturedResults = [RemoteFeedLoader.Result]()
         let exp = expectation(description: "wait for load completion")
         sut.load { receivedResult in
             switch (receivedResult, expectedResult) {
