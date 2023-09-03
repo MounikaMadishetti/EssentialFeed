@@ -10,6 +10,22 @@ import EssentialFeed
 
 final class EssentialFeedAPIEndToEndTests: XCTestCase {
 
+    // this demo func is just an example on how to use URLCache
+    func demo() {
+            let cache = URLCache(memoryCapacity: 10 * 1024 * 1024, diskCapacity: 100 * 1024 * 1024, diskPath: nil)
+            let configuration = URLSessionConfiguration.default
+            configuration.urlCache = cache
+            configuration.requestCachePolicy = .reloadIgnoringLocalCacheData
+            let session = URLSession(configuration: configuration)
+
+
+            let url = URL(string: "https://any-url.com")!
+            let request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 20)
+            // or
+
+            URLCache.shared = cache // to do in application didfinishwithlaunching with options so there are no inconsistency prbms where a few parts of the code using URLCache.shared and few using custom cache
+        }
+
     func test_endToEndServerGETFeedResult_matchesFixedTestAccountData() {
 
         switch getFeedResult() {
@@ -36,7 +52,9 @@ final class EssentialFeedAPIEndToEndTests: XCTestCase {
 
     private func getFeedResult(file: StaticString = #file, line: UInt = #line) -> LoadFeedResult? {
         let testServerURL = URL(string: "https://essentialdeveloper.com/feed-case-study/test-api/feed")!
-        let client = URLSessionHTTPClient()
+
+        // URLSessionConfiguration.ephemeral
+        let client = URLSessionHTTPClient(session: URLSession(configuration: URLSessionConfiguration.ephemeral))
         let loader = RemoteFeedLoader(url: testServerURL, client: client)
         trackMemoryLeaks(client, file: file, line: line)
         trackMemoryLeaks(loader, file: file, line: line)
