@@ -88,7 +88,7 @@ final class LoadFeedFromRemoteUseCaseTests: XCTestCase {
         })
     }
 
-    func test_load_deliversItemsOn200HTTPResponseAfterSutBecomesNil() {
+    func test_load_doesNotdeliverItemsOn200HTTPResponseAfterSutBecomesNil() {
         let client = SpyHTTPClient()
         var sut: RemoteFeedLoader? = RemoteFeedLoader(url: URL(string: "url.com")!, client: client)
         var capturedResult = [RemoteFeedLoader.Result]()
