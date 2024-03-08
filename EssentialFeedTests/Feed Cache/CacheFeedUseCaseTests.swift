@@ -26,7 +26,7 @@ final class CacheFeedUseCaseTests: XCTestCase {
         let (sut, store) = makeSUT()
         let feed = uniqueImageFeed()
         sut.save(feed.models) { _ in }
-        store.completeDeletion(with: anyError())
+        store.completeDeletion(with: anyNSError())
         XCTAssertEqual(store.receivedMessages, [.deleteCachedFeed])
     }
 
@@ -41,7 +41,7 @@ final class CacheFeedUseCaseTests: XCTestCase {
 
     func test_save_failsOnDeletionError() {
         let (sut, store) = makeSUT()
-        let deletionError = anyError()
+        let deletionError = anyNSError()
         expect(sut, toCompleteWithError: deletionError, when: {
             store.completeDeletion(with: deletionError)
         })
@@ -49,7 +49,7 @@ final class CacheFeedUseCaseTests: XCTestCase {
 
     func test_save_failsOnInsertionError() {
         let (sut, store) = makeSUT()
-        let insertionError = anyError()
+        let insertionError = anyNSError()
 
         expect(sut, toCompleteWithError: insertionError, when: {
             store.completeDeletionSuccessfully()
@@ -73,7 +73,7 @@ final class CacheFeedUseCaseTests: XCTestCase {
             recievedResults.append(result)
         }
         sut = nil
-        feedStore.completeDeletion(with: anyError())
+        feedStore.completeDeletion(with: anyNSError())
         XCTAssertTrue(recievedResults.isEmpty)
     }
 
@@ -86,7 +86,7 @@ final class CacheFeedUseCaseTests: XCTestCase {
         }
         feedStore.completeDeletionSuccessfully()
         sut = nil
-        feedStore.completeInsertion(with: anyError())
+        feedStore.completeInsertion(with: anyNSError())
         XCTAssertTrue(recievedResults.isEmpty)
     }
 
@@ -113,23 +113,5 @@ final class CacheFeedUseCaseTests: XCTestCase {
         wait(for: [expectation], timeout: 2.0)
 
         XCTAssertEqual(expectedError, receivedError as? NSError, file: file, line: line)
-    }
-
-    private func uniqueImage() -> FeedImage {
-        FeedImage(id: UUID(), description: "any", location: "any", url: anyURL())
-    }
-
-    private func uniqueImageFeed() -> (models: [FeedImage], local: [LocalFeedImage]) {
-        let items = [uniqueImage(), uniqueImage()]
-        let localItems = items.map { LocalFeedImage(id: $0.id, description: $0.description, location: $0.location, url: $0.url) }
-        return (models: items, local: localItems)
-    }
-
-    private func anyURL() -> URL {
-        URL(string: "https://any-url.com")!
-    }
-
-    private func anyError() -> NSError {
-        return NSError(domain: "domain", code: 1)
     }
 }

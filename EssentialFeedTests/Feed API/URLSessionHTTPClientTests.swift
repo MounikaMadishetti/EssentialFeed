@@ -42,7 +42,7 @@ final class URLSessionHTTPClientTests: XCTestCase {
 
     func test_getFromURL_failedOnAllInvalidRepresentationCases() {
         let anyData = anyData()
-        let anyError = anyError()
+        let anyNSError = anyNSError()
         let nonHTTPURLResponse = nonHTTPURLResponse()
         let anyHttpURLResponse = anyHttpURLResponse()
 
@@ -92,16 +92,8 @@ final class URLSessionHTTPClientTests: XCTestCase {
         return sut
     }
 
-    private func anyURL() -> URL {
-        return URL(string: "https://www.any-url.com")!
-    }
-
     private func anyData() -> Data {
         return Data(bytes: "anydata".utf8)
-    }
-
-    private func anyError() -> NSError {
-        return NSError(domain: "domain", code: 1)
     }
 
     private func nonHTTPURLResponse() -> URLResponse {

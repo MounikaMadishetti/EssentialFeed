@@ -23,6 +23,7 @@ final class EssentialFeedAPIEndToEndTests: XCTestCase {
             let request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 20)
             // or
 
+            // global shared
             URLCache.shared = cache // to do in application didfinishwithlaunching with options so there are no inconsistency prbms where a few parts of the code using URLCache.shared and few using custom cache
         }
 
@@ -53,7 +54,7 @@ final class EssentialFeedAPIEndToEndTests: XCTestCase {
     private func getFeedResult(file: StaticString = #file, line: UInt = #line) -> LoadFeedResult? {
         let testServerURL = URL(string: "https://essentialdeveloper.com/feed-case-study/test-api/feed")!
 
-        // URLSessionConfiguration.ephemeral
+        // URLSessionConfiguration.ephemeral - no disk storage for request and response
         let client = URLSessionHTTPClient(session: URLSession(configuration: URLSessionConfiguration.ephemeral))
         let loader = RemoteFeedLoader(url: testServerURL, client: client)
         trackMemoryLeaks(client, file: file, line: line)
@@ -68,6 +69,7 @@ final class EssentialFeedAPIEndToEndTests: XCTestCase {
             expectation.fulfill()
         }
         wait(for: [expectation], timeout: 10.0)
+        sleep(15)
         return receivedResult
     }
 
